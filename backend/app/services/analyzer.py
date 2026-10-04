@@ -5,7 +5,7 @@ from ..schemas.decision import (
     DecisionInput, AnalysisResponse, DecisionMap, DecisionMapItem,
     BlindSpot, AssumptionChainItem, ChainNode, CriticalUnknown,
     CrashTestScenario, DecisionFragility, ReflectionData,
-    DecisionGuidance, DecisionPathOption
+    DecisionGuidance, DecisionPathOption, BestDecisionSolution
 )
 from .gemini_service import GeminiService
 
@@ -32,16 +32,21 @@ def generate_dynamic_semantic_analysis(input_data: DecisionInput) -> AnalysisRes
     causal chains, unknowns, scenarios, and fragility ratings directly tied to the user's inputs.
     """
     topic = extract_core_topic(input_data.decision)
-    reasons = split_clauses(input_data.reasoning)
-    goals = split_clauses(input_data.goals)
-    factors = split_clauses(input_data.factors)
-    constraints = split_clauses(input_data.constraints)
+    reasoning_text = input_data.reasoning.strip() if input_data.reasoning and input_data.reasoning.strip() else f"Assessing how to best navigate {topic}"
+    goals_text = input_data.goals.strip() if input_data.goals and input_data.goals.strip() else "Maximize success while minimizing downside and regret"
+    factors_text = input_data.factors.strip() if input_data.factors and input_data.factors.strip() else "Required effort, resources, dependencies, and timing"
+    constraints_text = input_data.constraints.strip() if input_data.constraints and input_data.constraints.strip() else "Time limits, personal commitments, and boundary rules"
+
+    reasons = split_clauses(reasoning_text)
+    goals = split_clauses(goals_text)
+    factors = split_clauses(factors_text)
+    constraints = split_clauses(constraints_text)
     concerns = split_clauses(input_data.concerns) if input_data.concerns else []
 
-    primary_reason = reasons[0] if reasons else input_data.reasoning
-    primary_goal = goals[0] if goals else input_data.goals
-    primary_factor = factors[0] if factors else input_data.factors
-    primary_constraint = constraints[0] if constraints else input_data.constraints
+    primary_reason = reasons[0] if reasons else reasoning_text
+    primary_goal = goals[0] if goals else goals_text
+    primary_factor = factors[0] if factors else factors_text
+    primary_constraint = constraints[0] if constraints else constraints_text
 
     secondary_factor = factors[1] if len(factors) > 1 else "operational bandwidth"
     secondary_goal = goals[1] if len(goals) > 1 else "sustainable outcome"
@@ -309,6 +314,24 @@ def generate_dynamic_semantic_analysis(input_data: DecisionInput) -> AnalysisRes
         )
     )
 
+    # 9. Clear Solution & Best Decision Summary (User Requested Priority)
+    solution_summary = BestDecisionSolution(
+        bestDecision=f"Proceed conditionally on '{topic}', gated by verification of '{critical_unknowns[0].unknown}'.",
+        whyBest=f"This route captures the principal reward of '{primary_goal}' while preventing unrecoverable damage if '{primary_constraint}' is stressed.",
+        solution=f"Do not leap blindly into an all-or-nothing commitment. First test your critical unknown ('{critical_unknowns[0].unknown}'), lock a strict limit on '{primary_constraint}', and proceed in verifiable steps.",
+        actionSteps=[
+            f"Step 1 (Verify First): Discover '{critical_unknowns[0].howToDiscover}' prior to signing or locking in final terms.",
+            f"Step 2 (Defend Constraints): Keep a hard stop on '{primary_constraint}' so you retain emergency flexibility.",
+            f"Step 3 (Execute Milestone 1): Start with an initial low-risk pilot or trial for '{topic}' and inspect whether '{primary_goal}' is tracking as expected."
+        ],
+        keyConstraints=[
+            f"Strict Boundary: {primary_constraint}",
+            f"Variable to Watch: Ensure '{primary_factor}' remains predictable",
+            f"Success Metric: Meaningfully advances '{primary_goal}' without causing burnout or budget distress"
+        ],
+        riskWarning=f"If '{primary_factor}' degrades or '{primary_constraint}' is breached, halt immediately and deploy your fallback exit ramp."
+    )
+
     return AnalysisResponse(
         decisionMap=decision_map,
         blindSpots=blind_spots,
@@ -318,6 +341,7 @@ def generate_dynamic_semantic_analysis(input_data: DecisionInput) -> AnalysisRes
         fragility=fragility,
         reflection=reflection,
         guidance=guidance,
+        solutionSummary=solution_summary,
         timestamp=datetime.now(timezone.utc).isoformat()
     )
 
@@ -328,6 +352,10 @@ async def analyze_decision_workflow(
     # 1. Attempt structured Gemini LLM orchestration if key is available
     ai_result = await gemini_service.analyze(input_data, custom_api_key=custom_api_key)
     if ai_result:
+        # Guarantee solutionSummary is always provided even if LLM omitted it
+        if not ai_result.solutionSummary:
+            semantic_fallback = generate_dynamic_semantic_analysis(input_data)
+            ai_result.solutionSummary = semantic_fallback.solutionSummary
         return ai_result
 
     # 2. Resilient contextual semantic analysis deeply tailored to user's exact inputs

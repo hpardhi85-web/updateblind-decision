@@ -101,6 +101,23 @@ Produce a structured JSON response with exactly these top-level keys:
   "reflection": {{
     "initialFocus": "You initially emphasized...",
     "expandedPerspectives": ["...", "..."]
+  }},
+  "solutionSummary": {{
+    "bestDecision": "Direct, highly clear statement of the best decision to take",
+    "whyBest": "Clear rationale on why this is the most resilient, upside-capturing choice",
+    "solution": "Concrete, actionable solution addressing the dilemma",
+    "actionSteps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."],
+    "keyConstraints": ["Constraint 1: ...", "Constraint 2: ..."],
+    "riskWarning": "Critical safeguard: condition when this decision must be stopped or revised"
+  }},
+  "guidance": {{
+    "plainSummary": "...",
+    "solidGround": "...",
+    "unverifiedGamble": "...",
+    "recommendedNextMove": "...",
+    "proceedPath": {{ "pathName": "Proceed", "actionTitle": "...", "whenToChoose": "...", "mainRisk": "...", "requiredSafeguard": "..." }},
+    "declinePath": {{ "pathName": "Decline", "actionTitle": "...", "whenToChoose": "...", "mainRisk": "...", "requiredSafeguard": "..." }},
+    "negotiatePath": {{ "pathName": "Negotiate", "actionTitle": "...", "whenToChoose": "...", "mainRisk": "...", "requiredSafeguard": "..." }}
   }}
 }}
 """

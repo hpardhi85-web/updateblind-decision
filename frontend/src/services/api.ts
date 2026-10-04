@@ -14,7 +14,17 @@ export function setStoredApiKey(key: string): void {
   }
 }
 
-export async function analyzeDecision(input: DecisionInput): Promise<AnalysisResponse> {
+export async function analyzeDecision(rawInput: DecisionInput): Promise<AnalysisResponse> {
+  const topic = extractCoreTopic(rawInput.decision);
+  const input: DecisionInput = {
+    decision: rawInput.decision.trim(),
+    reasoning: rawInput.reasoning?.trim() || `Evaluating the viability and upside of ${topic}`,
+    goals: rawInput.goals?.trim() || `Achieve the best outcome while minimizing risk and regret`,
+    factors: rawInput.factors?.trim() || `Execution effort, key dependencies, timing, and personal impact`,
+    constraints: rawInput.constraints?.trim() || `Maintaining personal bandwidth, budget limits, and non-negotiables`,
+    concerns: rawInput.concerns?.trim() || ''
+  };
+
   const apiKey = getStoredApiKey();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -313,6 +323,22 @@ function generateDynamicLocalAnalysis(input: DecisionInput): AnalysisResponse {
         mainRisk: "Hesitation in asking the other party direct, probing questions.",
         requiredSafeguard: `Inquire explicitly: "What are the exact written policies regarding ${primaryFactor}?"`
       }
+    },
+    solutionSummary: {
+      bestDecision: `Proceed conditionally on '${topic}', gated by verification of '${primaryConstraint}'.`,
+      whyBest: `This path captures the primary upside of '${primaryGoal}' while preventing irreversible downsides if '${primaryConstraint}' comes under pressure.`,
+      solution: `Do not make an all-or-nothing leap immediately. Validate critical unknowns first, maintain a hard stop around '${primaryConstraint}', and proceed in condition-gated stages.`,
+      actionSteps: [
+        `Step 1 (Validate First): Confirm exact terms and dependencies before making an irrevocable commitment.`,
+        `Step 2 (Defend Boundary): Maintain an inviolable margin around '${primaryConstraint}'.`,
+        `Step 3 (Execute Milestone 1): Start with a reversible trial or initial milestone to test '${primaryFactor}' under real conditions.`
+      ],
+      keyConstraints: [
+        `Strict Boundary: ${primaryConstraint}`,
+        `Key Sensitivity: Must monitor '${primaryFactor}' to avoid surprises`,
+        `Core Goal: Must measurably advance '${primaryGoal}' without breaching boundaries`
+      ],
+      riskWarning: `If '${primaryFactor}' degrades or '${primaryConstraint}' is breached, halt immediately and deploy your fallback exit ramp.`
     }
   };
 }

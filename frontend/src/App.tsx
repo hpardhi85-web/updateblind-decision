@@ -10,20 +10,22 @@ import { CriticalUnknownsList } from './components/CriticalUnknownsList';
 import { CrashTestMatrix } from './components/CrashTestMatrix';
 import { FragilityGauge } from './components/FragilityGauge';
 import { DecisionGuidanceCard } from './components/DecisionGuidanceCard';
+import { BestDecisionSolutionCard } from './components/BestDecisionSolutionCard';
 import { ReflectionSection } from './components/ReflectionSection';
 import { DecisionCommitmentModal } from './components/DecisionCommitmentModal';
 import { AlertCircle, RefreshCw, Info } from 'lucide-react';
 
 const STEPS = [
-  { id: 'step-1-input', label: '1. Decision Input' },
-  { id: 'step-2-decision-map', label: '2. Decision Map' },
-  { id: 'step-3-blindspot-radar', label: '3. Blind Spot Radar' },
-  { id: 'step-4-assumption-chain', label: '4. Assumption Chain' },
-  { id: 'step-5-critical-unknowns', label: '5. Critical Unknowns' },
-  { id: 'step-6-crash-test', label: '6. Decision Crash Test' },
-  { id: 'step-7-fragility', label: '7. Decision Fragility' },
-  { id: 'step-8-guidance', label: '8. Decision Compass' },
-  { id: 'step-9-reflection', label: '9. Reflection' },
+  { id: 'step-1-input', label: '1. Problem & Constraints' },
+  { id: 'step-solution-best-decision', label: '2. Solution & Best Decision' },
+  { id: 'step-2-decision-map', label: '3. Decision Map' },
+  { id: 'step-3-blindspot-radar', label: '4. Blind Spot Radar' },
+  { id: 'step-4-assumption-chain', label: '5. Assumption Chain' },
+  { id: 'step-5-critical-unknowns', label: '6. Critical Unknowns' },
+  { id: 'step-6-crash-test', label: '7. Decision Crash Test' },
+  { id: 'step-7-fragility', label: '8. Decision Fragility' },
+  { id: 'step-8-guidance', label: '9. Decision Compass' },
+  { id: 'step-9-reflection', label: '10. Final Reflection' },
 ];
 
 export const App: React.FC = () => {
@@ -71,9 +73,9 @@ export const App: React.FC = () => {
     try {
       const result = await analyzeDecision(input);
       setAnalysis(result);
-      setActiveStep('step-2-decision-map');
+      setActiveStep('step-solution-best-decision');
       setTimeout(() => {
-        const el = document.getElementById('step-2-decision-map');
+        const el = document.getElementById('step-solution-best-decision');
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 150);
     } catch (err: unknown) {
@@ -189,7 +191,14 @@ export const App: React.FC = () => {
       {/* Structured Analysis Results */}
       {analysis && !isLoading && (
         <main id="decision-results-anchor">
-          {/* Step 2: Decision Map */}
+          {/* Step 2: Executive Solution, Best Decision & Key Constraints */}
+          {analysis.solutionSummary && (
+            <div id="step-solution-best-decision">
+              <BestDecisionSolutionCard solution={analysis.solutionSummary} />
+            </div>
+          )}
+
+          {/* Step 3: Decision Map */}
           <div id="step-2-decision-map">
             <DecisionMapCard map={analysis.decisionMap} />
           </div>

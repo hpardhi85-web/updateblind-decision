@@ -110,6 +110,15 @@ export interface DecisionGuidance {
   negotiatePath: DecisionPathOption;
 }
 
+export interface BestDecisionSolution {
+  bestDecision: string;
+  whyBest: string;
+  solution: string;
+  actionSteps: string[];
+  keyConstraints: string[];
+  riskWarning: string;
+}
+
 export interface AnalysisResponse {
   decisionMap: DecisionMap;
   blindSpots: BlindSpot[];
@@ -119,5 +128,6 @@ export interface AnalysisResponse {
   fragility: DecisionFragility;
   reflection: ReflectionData;
   guidance?: DecisionGuidance;
+  solutionSummary?: BestDecisionSolution;
   timestamp: string;
 }

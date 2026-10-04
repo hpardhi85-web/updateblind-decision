@@ -9,11 +9,11 @@ ScenarioType = Literal["BEST_CASE", "EXPECTED_CASE", "WORST_CASE"]
 FragilityLevel = Literal["Low", "Moderate", "High"]
 
 class DecisionInput(BaseModel):
-    decision: str = Field(..., min_length=3, max_length=500, description="The core decision being considered")
-    reasoning: str = Field(..., min_length=3, max_length=1500, description="Current arguments and logic for this choice")
-    goals: str = Field(..., min_length=3, max_length=1000, description="Primary desired outcomes")
-    factors: str = Field(..., min_length=2, max_length=1000, description="Key variables in play")
-    constraints: str = Field(..., min_length=2, max_length=1000, description="Non-negotiable boundaries or timelines")
+    decision: str = Field(..., min_length=3, max_length=500, description="The core problem or decision being considered")
+    reasoning: Optional[str] = Field(default="", max_length=1500, description="Current arguments and logic for this choice")
+    goals: Optional[str] = Field(default="", max_length=1000, description="Primary desired outcomes")
+    factors: Optional[str] = Field(default="", max_length=1000, description="Key variables in play")
+    constraints: Optional[str] = Field(default="", max_length=1000, description="Non-negotiable boundaries or timelines")
     concerns: Optional[str] = Field(default="", max_length=1000, description="Hesitations or uneasy feelings")
 
 class DecisionMapItem(BaseModel):
@@ -99,6 +99,14 @@ class DecisionGuidance(BaseModel):
     declinePath: DecisionPathOption
     negotiatePath: DecisionPathOption
 
+class BestDecisionSolution(BaseModel):
+    bestDecision: str
+    whyBest: str
+    solution: str
+    actionSteps: List[str]
+    keyConstraints: List[str]
+    riskWarning: str
+
 class AnalysisResponse(BaseModel):
     decisionMap: DecisionMap
     blindSpots: List[BlindSpot]
@@ -108,4 +116,5 @@ class AnalysisResponse(BaseModel):
     fragility: DecisionFragility
     reflection: ReflectionData
     guidance: Optional[DecisionGuidance] = None
+    solutionSummary: Optional[BestDecisionSolution] = None
     timestamp: str
