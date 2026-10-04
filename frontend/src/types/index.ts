@@ -92,6 +92,24 @@ export interface ReflectionData {
   expandedPerspectives: string[];
 }
 
+export interface DecisionPathOption {
+  pathName: string;
+  actionTitle: string;
+  whenToChoose: string;
+  mainRisk: string;
+  requiredSafeguard: string;
+}
+
+export interface DecisionGuidance {
+  plainSummary: string;
+  solidGround: string;
+  unverifiedGamble: string;
+  recommendedNextMove: string;
+  proceedPath: DecisionPathOption;
+  declinePath: DecisionPathOption;
+  negotiatePath: DecisionPathOption;
+}
+
 export interface AnalysisResponse {
   decisionMap: DecisionMap;
   blindSpots: BlindSpot[];
@@ -100,5 +118,6 @@ export interface AnalysisResponse {
   scenarios: CrashTestScenario[];
   fragility: DecisionFragility;
   reflection: ReflectionData;
+  guidance?: DecisionGuidance;
   timestamp: string;
 }

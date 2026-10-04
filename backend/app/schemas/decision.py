@@ -83,6 +83,22 @@ class ReflectionData(BaseModel):
     initialFocus: str
     expandedPerspectives: List[str]
 
+class DecisionPathOption(BaseModel):
+    pathName: str
+    actionTitle: str
+    whenToChoose: str
+    mainRisk: str
+    requiredSafeguard: str
+
+class DecisionGuidance(BaseModel):
+    plainSummary: str
+    solidGround: str
+    unverifiedGamble: str
+    recommendedNextMove: str
+    proceedPath: DecisionPathOption
+    declinePath: DecisionPathOption
+    negotiatePath: DecisionPathOption
+
 class AnalysisResponse(BaseModel):
     decisionMap: DecisionMap
     blindSpots: List[BlindSpot]
@@ -91,4 +107,5 @@ class AnalysisResponse(BaseModel):
     scenarios: List[CrashTestScenario]
     fragility: DecisionFragility
     reflection: ReflectionData
+    guidance: Optional[DecisionGuidance] = None
     timestamp: str

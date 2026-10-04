@@ -4,7 +4,8 @@ from typing import Optional, List
 from ..schemas.decision import (
     DecisionInput, AnalysisResponse, DecisionMap, DecisionMapItem,
     BlindSpot, AssumptionChainItem, ChainNode, CriticalUnknown,
-    CrashTestScenario, DecisionFragility, ReflectionData
+    CrashTestScenario, DecisionFragility, ReflectionData,
+    DecisionGuidance, DecisionPathOption
 )
 from .gemini_service import GeminiService
 
@@ -279,6 +280,35 @@ def generate_dynamic_semantic_analysis(input_data: DecisionInput) -> AnalysisRes
         ]
     )
 
+    # 8. Actionable Decision Compass & Pathways
+    guidance = DecisionGuidance(
+        plainSummary=f"Choosing to {topic} is logical ONLY if your boundary ('{primary_constraint}') has a safe buffer and '{primary_reason}' proves resilient in practice.",
+        solidGround=f"Your stated reasoning ('{primary_reason}') provides genuine motivation, and you have clear sight of your goals ('{primary_goal}').",
+        unverifiedGamble=f"You are gambling on '{primary_factor}' remaining trouble-free, while assuming '{primary_constraint}' will not trigger acute stress.",
+        recommendedNextMove=f"Resolve '{critical_unknowns[0].unknown}' before committing your final signature.",
+        proceedPath=DecisionPathOption(
+            pathName="Proceed",
+            actionTitle=f"Choose to {topic}",
+            whenToChoose=f"Pick this if you can absorb the Worst-Case scenario without catastrophe, and your boundary ('{primary_constraint}') has an emergency safety cushion.",
+            mainRisk=f"Acute friction if '{primary_factor}' becomes more costly or unpredictable than budgeted.",
+            requiredSafeguard=f"Secure written confirmation or an objective fallback plan for '{primary_constraint}'."
+        ),
+        declinePath=DecisionPathOption(
+            pathName="Decline / Walk Away",
+            actionTitle=f"Pass on {topic}",
+            whenToChoose=f"Pick this if preserving '{primary_constraint}' is strictly non-negotiable and you cannot comfortably afford the fallout of '{concerns[0] if concerns else 'unexpected setbacks'}'.",
+            mainRisk=f"Foregoing the immediate upside of '{primary_reason}' and potential progress toward '{primary_goal}'.",
+            requiredSafeguard=f"Redirect your resources toward alternative pathways that achieve '{primary_goal}' with lower downside risk."
+        ),
+        negotiatePath=DecisionPathOption(
+            pathName="Negotiate & Verify",
+            actionTitle="De-Risk Before Committing",
+            whenToChoose="This is the highest-leverage initial move: ask the critical missing questions before making a binding commitment.",
+            mainRisk="Hesitation or discomfort in asking the counterparty direct, probing questions.",
+            requiredSafeguard=f"Inquire directly: \"{critical_unknowns[0].howToDiscover}\""
+        )
+    )
+
     return AnalysisResponse(
         decisionMap=decision_map,
         blindSpots=blind_spots,
@@ -287,6 +317,7 @@ def generate_dynamic_semantic_analysis(input_data: DecisionInput) -> AnalysisRes
         scenarios=scenarios,
         fragility=fragility,
         reflection=reflection,
+        guidance=guidance,
         timestamp=datetime.now(timezone.utc).isoformat()
     )
 

@@ -286,6 +286,33 @@ function generateDynamicLocalAnalysis(input: DecisionInput): AnalysisResponse {
         `Gathering objective information regarding '${primaryFactor}' before formalizing a choice`,
         `Establishing an explicit exit ramp so your reasoning remains antifragile`
       ]
+    },
+    guidance: {
+      plainSummary: `Choosing to ${topic} makes sense only if your constraint ('${primaryConstraint}') has enough buffer and '${primaryReason}' actually delivers without unmitigated friction.`,
+      solidGround: `Your conviction around '${primaryReason}' provides tangible motivation, and you have clear awareness of your goals ('${primaryGoal}').`,
+      unverifiedGamble: `You are assuming that '${primaryFactor}' will cooperate predictably, and that '${primaryConstraint}' will not trigger acute stress.`,
+      recommendedNextMove: `Verify independent data regarding '${primaryFactor}' before locking in your final answer.`,
+      proceedPath: {
+        pathName: "Proceed",
+        actionTitle: `Choose to ${topic}`,
+        whenToChoose: `Take this path if you can comfortably tolerate the worst-case scenario and your boundary constraint ('${primaryConstraint}') has a guaranteed safety margin.`,
+        mainRisk: `Risk of acute friction if '${primaryFactor}' proves more volatile or costly than expected.`,
+        requiredSafeguard: `Secure written confirmation or a clear backup buffer for '${primaryConstraint}'.`
+      },
+      declinePath: {
+        pathName: "Decline / Walk Away",
+        actionTitle: `Pass on this ${topic}`,
+        whenToChoose: `Take this path if protecting '${primaryConstraint}' is strictly non-negotiable and you cannot afford the fallout of '${concerns[0] || 'unforeseen setbacks'}'.`,
+        mainRisk: `Trading off the immediate upside of '${primaryReason}' and the potential progress toward '${primaryGoal}'.`,
+        requiredSafeguard: `Direct your energy into alternative paths that achieve '${primaryGoal}' with lower downside risk.`
+      },
+      negotiatePath: {
+        pathName: "Negotiate & Gather Data",
+        actionTitle: "De-Risk Before Committing",
+        whenToChoose: "This is the highest-leverage move today: clarify unknown terms before making a binding commitment.",
+        mainRisk: "Hesitation in asking the other party direct, probing questions.",
+        requiredSafeguard: `Inquire explicitly: "What are the exact written policies regarding ${primaryFactor}?"`
+      }
     }
   };
 }

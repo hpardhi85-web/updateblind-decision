@@ -9,6 +9,7 @@ import { AssumptionChainView } from './components/AssumptionChainView';
 import { CriticalUnknownsList } from './components/CriticalUnknownsList';
 import { CrashTestMatrix } from './components/CrashTestMatrix';
 import { FragilityGauge } from './components/FragilityGauge';
+import { DecisionGuidanceCard } from './components/DecisionGuidanceCard';
 import { ReflectionSection } from './components/ReflectionSection';
 import { DecisionCommitmentModal } from './components/DecisionCommitmentModal';
 import { AlertCircle, RefreshCw, Info } from 'lucide-react';
@@ -21,7 +22,8 @@ const STEPS = [
   { id: 'step-5-critical-unknowns', label: '5. Critical Unknowns' },
   { id: 'step-6-crash-test', label: '6. Decision Crash Test' },
   { id: 'step-7-fragility', label: '7. Decision Fragility' },
-  { id: 'step-8-reflection', label: '8. Reflection' },
+  { id: 'step-8-guidance', label: '8. Decision Compass' },
+  { id: 'step-9-reflection', label: '9. Reflection' },
 ];
 
 export const App: React.FC = () => {
@@ -217,8 +219,15 @@ export const App: React.FC = () => {
             <FragilityGauge fragility={analysis.fragility} />
           </div>
 
-          {/* Step 8: Reflection & Final Decision Action */}
-          <div id="step-8-reflection">
+          {/* Step 8: Decision Compass (What is the right decision?) */}
+          <div id="step-8-guidance">
+            {analysis.guidance && (
+              <DecisionGuidanceCard guidance={analysis.guidance} />
+            )}
+          </div>
+
+          {/* Step 9: Reflection & Final Decision Action */}
+          <div id="step-9-reflection">
             <ReflectionSection
               reflection={analysis.reflection}
               onOpenCommitment={() => setShowCommitModal(true)}
