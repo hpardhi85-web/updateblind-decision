@@ -164,7 +164,22 @@ Health check and configuration readiness probe.
 
 ---
 
-## 7. AI Safety & Operational Directives
+## 7. 🚀 1-Click Deployment to Vercel (Frontend + Backend Together)
+
+The repository is pre-configured with unified monorepo support (`vercel.json`, `package.json`, `api/index.py`, and `requirements.txt`) so both the **React Frontend** and **FastAPI Python Backend** deploy simultaneously in a single Vercel project:
+
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New..."** → **"Project"**.
+2. Select your repository: **`THE-BLIND-SPOT-DECISON-MAKER`**.
+3. **Root Directory**: Leave it as default (`./` or root). **Do not select frontend or backend folder!**
+4. **Environment Variables**: Add your Gemini API key:
+   - Key: `GEMINI_API_KEY`
+   - Value: `Your_Gemini_API_Key`
+5. Click **"Deploy"**!
+   - Vercel automatically builds the Vite frontend bundle into `frontend/dist`.
+   - Vercel automatically provisions the serverless Python runtime from `api/index.py`.
+   - All `/api/*` calls route directly to FastAPI serverless functions on the same domain without CORS issues.
+
+## 8. AI Safety & Operational Directives
 
 BlindSpot adheres strictly to 13 AI Safety Rules:
 1. **Never make the decision for the user.**
@@ -177,7 +192,7 @@ BlindSpot adheres strictly to 13 AI Safety Rules:
 
 ---
 
-## 8. Automated Testing
+## 9. Automated Testing
 
 Run the backend unit tests:
 ```bash
@@ -188,7 +203,7 @@ All tests verify input validation, schema completeness, error handling, and adhe
 
 ---
 
-## 9. Security Considerations
+## 10. Security Considerations
 
 - **Backend-Only Secrets**: The Gemini API key is never bundled in client code or frontend JS.
 - **Input Sanitization & Length Bounds**: Pydantic restricts max payload sizes preventing prompt injection buffer overruns.
@@ -197,7 +212,7 @@ All tests verify input validation, schema completeness, error handling, and adhe
 
 ---
 
-## 10. Limitations
+## 11. Limitations
 
 - BlindSpot relies on the user's honesty when inputting constraints and factors.
 - Scenarios are exploratory crash tests designed to uncover blind spots, not deterministic prophecies of the future.

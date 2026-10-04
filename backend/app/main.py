@@ -20,17 +20,18 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS configuration
+# Universal CORS configuration for Localhost, Vercel preview & production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API Router
-app.include_router(api_router)
+# Include API Router for both /api/v1 and /v1 prefixes (Vercel serverless resilience)
+app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix="/v1")
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
