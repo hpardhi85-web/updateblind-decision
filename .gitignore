@@ -24,7 +24,7 @@ run_error.log
 
 # Node & Frontend
 node_modules/
-dist/
+frontend/node_modules/
 dist-ssr/
 *.local
 frontend/dev_server.log
